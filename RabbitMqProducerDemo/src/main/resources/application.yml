@@ -1,0 +1,26 @@
+server:
+  port: 8081
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    username: root
+    password: 123456
+    url: jdbc:mysql://localhost:3306/data_source_name?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+  rabbitmq:
+    username: guest
+    password: guest
+    host: 127.0.0.1
+    #Spring Boot 2.3.0 publisher-confirms被废弃
+    #publisher-confirms: true
+    #simple：这是最基础的确认模式，消息一旦被RabbitMQ接收，就会立即返回确认。
+    #correlated：在这种模式下，RabbitMQ会为每个消息提供一个唯一的correlation data，然后在确认消息时返回这个数据。这让你能够知道是哪个消息被确认了。
+    #none：这表示不使用publisher confirms。
+    publisher-confirm-type: correlated
+    publisher-returns: true
+  redis:
+    host: 127.0.0.1
+    database: 0
+    port: 6379
+    password: 123
+  cache:
+    cache-names: menus_cache
