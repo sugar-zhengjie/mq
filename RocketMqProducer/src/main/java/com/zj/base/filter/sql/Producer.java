@@ -36,6 +36,7 @@ public class Producer {
              */
             Message msg = new Message("FilterSQLTopic", "Tag1", ("Hello World" + i).getBytes());
 
+            // 设置属性，用于消费者过滤
             msg.putUserProperty("i", String.valueOf(i));
 
             //5.发送消息
