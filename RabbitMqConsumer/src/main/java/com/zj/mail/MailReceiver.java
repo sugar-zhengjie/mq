@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
-import org.springframework.amqp.support.converter.MessageConversionException;
-import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.util.Date;
@@ -70,10 +67,9 @@ public class MailReceiver {
             channel.basicAck(tag,true);
             return;
         }
-
-        MimeMessage msg = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(msg);
         try {
+            MimeMessage msg = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(msg);
             helper.setTo(user.getEmail());
             helper.setFrom(mailProperties.getUsername());
             helper.setSubject("邮件主题");
@@ -90,10 +86,16 @@ public class MailReceiver {
             channel.basicAck(tag, false);
             logger.info(messageId + ":邮件发送成功");
 
-        } catch (MessagingException e) {
-            channel.basicNack(tag, false, true);
-            e.printStackTrace();
-            logger.error("邮件发送失败：" + e.getMessage());
+        } catch (Exception e1) {
+            try {
+                channel.basicNack(tag, false, true);
+            }catch (Exception e2) {
+                // 打印日志，后续做补偿处理
+                e2.printStackTrace();
+                logger.error("邮件发送失败：" + e2.getMessage());
+            }
+            e1.printStackTrace();
+            logger.error("邮件发送失败：" + e1.getMessage());
         }
     }
 

@@ -17,4 +17,9 @@ public class MailConstants {
     public static final String MAIL_QUEUE_NAME = "zj.mail.type.one";
     public static final String MAIL_EXCHANGE_NAME = "zj.mail.exchange";
     public static final String MAIL_ROUTING_KEY_NAME = "zj.mail.routing.key";
+    public static final String SMS_QUEUE_NAME = "zj.mail.type.one";
+    public static final String SMS_EXCHANGE_NAME = "zj.mail.exchange";
+    public static final String SMS_ROUTING_KEY_NAME = "zj.mail.routing.key";
+    public static final String DEAD_LETTER_EXCHANGE_NAME = "zj.deal.letter.exchange";
+    public static final String DEAD_LETTER_ROUTING_KEY_NAME = "zj.deal.letter.routing.key";
 }

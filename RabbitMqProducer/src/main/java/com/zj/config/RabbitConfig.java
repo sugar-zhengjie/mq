@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -59,10 +61,15 @@ public class RabbitConfig {
         return rabbitTemplate;
     }
 
+   /*************************************** email mq ***************************************/
     @Bean
     Queue mailQueue() {
-        return new Queue(MailConstants.MAIL_QUEUE_NAME, true);
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-dead-letter-exchange", MailConstants.DEAD_LETTER_EXCHANGE_NAME);
+        args.put("x-dead-letter-routing-key", MailConstants.DEAD_LETTER_ROUTING_KEY_NAME);
+        return new Queue(MailConstants.MAIL_QUEUE_NAME, true, false, false, args);
     }
+
 
     @Bean
     DirectExchange mailExchange() {
@@ -72,6 +79,26 @@ public class RabbitConfig {
     @Bean
     Binding mailBinding() {
         return BindingBuilder.bind(mailQueue()).to(mailExchange()).with(MailConstants.MAIL_ROUTING_KEY_NAME);
+    }
+
+
+    /*************************************** sms mq ***************************************/
+    @Bean
+    Queue smsQueue() {
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-dead-letter-exchange", MailConstants.DEAD_LETTER_EXCHANGE_NAME);
+        args.put("x-dead-letter-routing-key", MailConstants.DEAD_LETTER_ROUTING_KEY_NAME);
+        return new Queue(MailConstants.SMS_QUEUE_NAME, true, false, false, args);
+    }
+
+    @Bean
+    DirectExchange smsExchange() {
+        return new DirectExchange(MailConstants.SMS_EXCHANGE_NAME, true, false);
+    }
+
+    @Bean
+    Binding smsBinding() {
+        return BindingBuilder.bind(smsQueue()).to(smsExchange()).with(MailConstants.SMS_ROUTING_KEY_NAME);
     }
 
 }
